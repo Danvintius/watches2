@@ -1,23 +1,44 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import Clock from './components/Clock';
+import Form from './components/Form';
+import { nanoid } from 'nanoid';
 
 function App() {
+  const [clocks, setClocks] = useState([])
+
+  const addNewClock = (clock) => {
+    setClocks((prevState) => [...prevState, {
+      id: nanoid(),
+      name: clock.name,
+      timeZone: clock.timeZone
+    }]);
+  };
+
+  const deleteClock = (id) => {
+    setClocks(clocks.filter((i) => i.id !== id));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="wrapper">
+      <Form addNewClock={addNewClock} />
+      <div>
+        {Array.isArray(clocks) && clocks.length > 0
+          ? clocks.map((clock) => {
+            return (
+              <Clock
+                key={clock.id}
+                id={clock.id}
+                name={clock.name}
+                timeZone={clock.timeZone}
+                deleteClock={deleteClock}
+              />
+            );
+          })
+          : <div>
+            <p className="no-clocks">No clocks...</p>
+          </div>}
+      </div>
     </div>
   );
 }
